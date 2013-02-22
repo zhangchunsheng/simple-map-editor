@@ -1,0 +1,97 @@
+
+-------------------------------
+    Unstable Version 1.0
+-------------------------------
+Tileset management
+- Save and load tilesets
+- Add tiles to tilesets via drag n drop.
+- Right click tiles to edit information.
+
+
+
+-------------------------------
+    Unstable Version 0.11
+-------------------------------
+
+Undo and Redo
+
+- Toolbars buttons for Undo / Redo.
+- Potential memory issue, as there is no limit on the number
+  of actions that can be undone.
+- Drag the map around with the right mouse button.
+- Added beach decoration graphic
+
+
+-------------------------------
+    Stable Version 0.10
+-------------------------------
+
+Cosmetic
+
+- Toolbars made smaller
+
+
+-------------------------------
+    Stable Version 0.9
+-------------------------------
+
+Fill
+
+- Added a flood fill toggle button
+- Make the zoom buttons easier to read
+- Fixed issue with sliders not showing the correct values when a scene is
+  loaded
+
+
+-------------------------------
+    Stable Version 0.8
+-------------------------------
+
+Zooming
+- Added zoom in, out and 100% buttons
+
+
+-------------------------------
+    Stable Version 0.7
+-------------------------------
+
+Artistic streak
+
+- Added riverbank tileset
+
+-------------------------------
+    Stable Version 0.6
+-------------------------------
+
+Colour change effects
+
+- Dialog may be toggled by a toolbar button and is hidden by default.
+- Added a reset button to colour adjust dialog
+- Added labels to the colour sliders.
+
+
+-------------------------------
+    Unstable version 0.5
+-------------------------------
+
+Colour change effects
+
+- Non-modal dialog with colour sliders to adjust red, green and blue colour
+  channel multipliers and adjust the hue and saturation.
+- Toolbar buttons to move and resize the map.
+- Toolbar button to clear the map
+
+-------------------------------
+ Initial release version 0.4
+-------------------------------
+
+Initial working map editor
+
+- 3 layers.
+- Toolbar button to select layer to edit
+- Toolbar button to hide layers not being edited
+- Toolbar button to hide or show the map grid
+
+- Load, new, save (handy features).
+
+This version is not downloadable here as it will not compile without fixes.
