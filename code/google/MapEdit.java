@@ -21,6 +21,11 @@ public class MapEdit implements ActionListener, ChangeListener, KeyListener {
 
 	public static final int PAINT_NORMAL = 0;
 	public static final int PAINT_FILL = 1;
+	
+	int width = 5332;
+	int height = 2728;
+	int tilewidth = 86;
+	int tileheight = 44;
 
 	JFrame mainFrame; // The window.
 	MapComponent mapPanel; // Special panel for rendering map with a viewport.
@@ -46,7 +51,9 @@ public class MapEdit implements ActionListener, ChangeListener, KeyListener {
 	JToolBar innerToolBar;
 	JButton newBtn;
 	JButton openBtn;
+	JButton openMapBtn;
 	JButton saveBtn;
+	JButton saveMapBtn;
 	JButton clearBtn;
 	JToggleButton layerButtons[];
 	JToggleButton hideBtn;
@@ -82,9 +89,11 @@ public class MapEdit implements ActionListener, ChangeListener, KeyListener {
 	
 	JMenuItem openMI;
 	JMenuItem newMI;
-	JMenuItem newMap;//導入圖片並按86*44建立矩陣
+	JMenuItem newMapMI;//導入圖片並按86*44建立矩陣
 	JMenuItem saveMI;
 	JMenuItem saveAsMI;
+	JMenuItem saveMapMI;
+	JMenuItem saveMapAsMI;
 	JMenuItem exitMI;
 	
 	JMenuItem about;
@@ -107,7 +116,7 @@ public class MapEdit implements ActionListener, ChangeListener, KeyListener {
 		zoomLevel = 1;
 		openFile = null;
 		try {
-			scene = Scene.loadScene("lastOpenScene.dat");
+			scene = Scene.loadScene("lastOpenScene.dat", false);
 		} catch (IOException e) {
 			scene = new Scene();
 		}
@@ -239,9 +248,11 @@ public class MapEdit implements ActionListener, ChangeListener, KeyListener {
 
 		openMI = new JMenuItem("Open...");
 		newMI = new JMenuItem("New");
-		newMap = new JMenuItem("新建地圖");
+		newMapMI = new JMenuItem("新建地圖");
 		saveMI = new JMenuItem("Save");
 		saveAsMI = new JMenuItem("Save As...");
+		saveMapMI = new JMenuItem("保存");
+		saveMapAsMI = new JMenuItem("導出為");
 		exitMI = new JMenuItem("Exit");
 
 		undoMI = new JMenuItem("Undo");
@@ -252,9 +263,11 @@ public class MapEdit implements ActionListener, ChangeListener, KeyListener {
 
 		openMI.addActionListener(this);
 		newMI.addActionListener(this);
-		newMap.addActionListener(this);
+		newMapMI.addActionListener(this);
 		saveMI.addActionListener(this);
 		saveAsMI.addActionListener(this);
+		saveMapMI.addActionListener(this);
+		saveMapAsMI.addActionListener(this);
 		exitMI.addActionListener(this);
 		undoMI.addActionListener(this);
 		redoMI.addActionListener(this);
@@ -267,9 +280,11 @@ public class MapEdit implements ActionListener, ChangeListener, KeyListener {
 
 		fileMenu.add(openMI);
 		fileMenu.add(newMI);
-		fileMenu.add(newMap);
+		fileMenu.add(newMapMI);
 		fileMenu.add(saveMI);
 		fileMenu.add(saveAsMI);
+		fileMenu.add(saveMapMI);
+		fileMenu.add(saveMapAsMI);
 		fileMenu.add(exitMI);
 		
 		editMenu.add(undoMI);
@@ -305,7 +320,9 @@ public class MapEdit implements ActionListener, ChangeListener, KeyListener {
 		String basepath = "../../";
 		/* Map file buttons */
 		saveBtn = makeBtn("Save", basepath + "icons/save.gif", "Save map");
+		saveMapBtn = makeBtn("SaveMap", basepath + "icons/save.gif", "Save map");
 		openBtn = makeBtn("Open...", basepath + "icons/open.gif", "Open map...");
+		openMapBtn = makeBtn("OpenMap...", basepath + "icons/open.gif", "Open map...");
 		newBtn = makeBtn("New", basepath + "icons/new.gif", "New map");
 		clearBtn = makeBtn("Clear", basepath + "icons/clear.gif",
 				"Reset map (Delete all tiles)");
@@ -379,6 +396,10 @@ public class MapEdit implements ActionListener, ChangeListener, KeyListener {
 		outerToolBar.add(openBtn);
 		outerToolBar.add(saveBtn);
 		outerToolBar.add(clearBtn);
+		
+		outerToolBar.addSeparator();
+		outerToolBar.add(openMapBtn);
+		outerToolBar.add(saveMapBtn);
 
 		outerToolBar.addSeparator();
 		outerToolBar.add(undoBtn);
@@ -475,6 +496,10 @@ public class MapEdit implements ActionListener, ChangeListener, KeyListener {
 			int success = chooser.showOpenDialog(mainFrame);
 			if (success == JFileChooser.APPROVE_OPTION)
 				openFile(chooser.getSelectedFile());
+		} else if(source == openMapBtn) {
+			int success = chooser.showOpenDialog(mainFrame);
+			if (success == JFileChooser.APPROVE_OPTION)
+				openMapFile(chooser.getSelectedFile());
 		} else if (source == saveBtn || source == saveMI) {
 			if (openFile == null) {
 				/* File's never been saved, use save as instead. */
@@ -482,10 +507,17 @@ public class MapEdit implements ActionListener, ChangeListener, KeyListener {
 						e.getActionCommand()));
 			} else
 				saveFile(openFile);
-		} else if (source == newBtn || source == newMI) {
+		} else if(source == saveMapBtn || source == saveMapMI) {
+			if (openFile == null) {
+				/* File's never been saved, use save as instead. */
+				actionPerformed(new ActionEvent(saveMapAsMI, e.getID(),
+						e.getActionCommand()));
+			} else
+				saveMapFile(openFile);
+		}else if (source == newBtn || source == newMI) {
 			newFile();
 			openFile = null;
-		} else if(source == newMap) {
+		} else if(source == newMapMI) {
 			newFileMap();
 			openFile = null;
 		} else if (source == clearBtn) {
@@ -561,6 +593,11 @@ public class MapEdit implements ActionListener, ChangeListener, KeyListener {
 			int success = chooser.showSaveDialog(mainFrame);
 			if (success == JFileChooser.APPROVE_OPTION) {
 				saveFile(chooser.getSelectedFile());
+			}
+		} else if(source == saveMapAsMI) {
+			int success = chooser.showSaveDialog(mainFrame);
+			if (success == JFileChooser.APPROVE_OPTION) {
+				saveMapFile(chooser.getSelectedFile());
 			}
 		} else if (source == exitMI) {
 			mainFrame.dispose(); /* TODO: "Do you want to save?" */
@@ -699,6 +736,35 @@ public class MapEdit implements ActionListener, ChangeListener, KeyListener {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Saves the file... (or tells the scene to save it actually)
+	 **/
+	public void saveMapFile(File file) {
+		System.err.println("Saving scene as " + file);
+		System.out.println("path:" + file.getParent() + " name:" + file.getName());
+		String js_fileName = file.getName();
+		if(js_fileName.indexOf(".") > 0) {
+			js_fileName = js_fileName.substring(0, js_fileName.indexOf("."));
+		}
+		js_fileName += ".js";
+		System.out.println("js_fileName:" + js_fileName);
+		File js_file = new File(file.getParent() + "\\" + js_fileName);
+
+		if (scene.getTileset().isUnsaved()) {
+			System.out.println("?? 2 " + (scene.getTileset() == gfx));
+			PromptDialog.tell("Please save your tileset first.", "OK");
+			return;
+		}
+		try {
+			scene.saveMapScene(file, js_file);
+			openFile = file;
+			mainFrame.validate();
+		} catch (Exception e) {
+			PromptDialog.tell("Could not save: " + e, "OK");
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Opens the map file.
@@ -706,7 +772,7 @@ public class MapEdit implements ActionListener, ChangeListener, KeyListener {
 	public void openFile(File file) {
 		try {
 			zoomLevel = 1;
-			scene = Scene.loadScene(file);
+			scene = Scene.loadScene(file, false);
 			map = scene.getMap();
 			setGraphicsBank(scene.getTileset());
 			System.out.println("Scene caused tileset " + gfx.getFile()
@@ -729,7 +795,42 @@ public class MapEdit implements ActionListener, ChangeListener, KeyListener {
 		} catch (IOException e) {
 			System.out.println("Invalid Map File. " + e);
 		}
+	}
+	
+	/**
+	 * Opens the map file.
+	 **/
+	public void openMapFile(File file) {
+		try {
+			zoomLevel = 1;
+			scene = Scene.loadScene(file, true);
+			map = scene.getMap();
+			map.tileWidth = tilewidth;
+			map.tileHeight = tileheight;
+			map.zoomWidth = tilewidth;
+			map.zoomHeight = tileheight;
+			map.hasBackground = true;
+			setGraphicsBank(scene.getTileset());
+			System.out.println("Scene caused tileset " + gfx.getFile()
+					+ " to be loaded");
 
+			mapPanel.setMap(map);
+
+			setIgnoreEffectChanges(true);
+			r.setValue((int) (scene.effect_rScale * 100));
+			g.setValue((int) (scene.effect_gScale * 100));
+			b.setValue((int) (scene.effect_bScale * 100));
+			h.setValue((int) (scene.effect_hue * 360));
+			setIgnoreEffectChanges(false);
+			s.setValue((int) (scene.effect_sat * 100));
+
+			openFile = file; /* TODO: bad variable name */
+			mainFrame.validate();
+			mapPanel.validate();
+			mainFrame.repaint();
+		} catch (IOException e) {
+			System.out.println("Invalid Map File. " + e);
+		}
 	}
 
 	/**
@@ -756,9 +857,14 @@ public class MapEdit implements ActionListener, ChangeListener, KeyListener {
 	 * 導入圖片並按86*44創建矩陣
 	 **/
 	public void newFileMap() {
-		scene = new Scene(new Map(10, 10), new ArrayList(), gfx);
+		scene = new Scene(new Map(width / tilewidth, height / tileheight), new ArrayList(), gfx);
 		zoomLevel = 1;
 		map = scene.getMap();
+		map.tileWidth = tilewidth;
+		map.tileHeight = tileheight;
+		map.zoomWidth = tilewidth;
+		map.zoomHeight = tileheight;
+		map.hasBackground = true;
 		setGraphicsBank(scene.getTileset());
 		mapPanel.setMap(map);
 		mapPanel.repaint();

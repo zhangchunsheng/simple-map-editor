@@ -22,6 +22,9 @@ public class MapComponent extends JComponent implements MouseListener,
 	boolean hideLayers = false;
 	boolean showGrid = true;
 	boolean stateChanged = false;
+	
+	boolean hasBackground = false;
+	ImageIcon img = new ImageIcon("gfx/map.png");
 
 	Stack undoStack;
 	Stack redoStack;
@@ -64,6 +67,7 @@ public class MapComponent extends JComponent implements MouseListener,
 
 		tileWidth = m.getZoomWidth();
 		tileHeight = m.getZoomHeight();
+		hasBackground = m.getHasBackground();
 
 		setPreferredSize(new Dimension(tileWidth * width, tileHeight * height));
 		revalidate();
@@ -87,8 +91,9 @@ public class MapComponent extends JComponent implements MouseListener,
 	synchronized public void paintComponent(Graphics g) {
 		g.setColor(Color.white);
 		g.fillRect(0, 0, width * tileWidth, height * tileHeight);
-		ImageIcon img = new ImageIcon("gfx/map4.png");
-		g.drawImage(img.getImage(), 0, 0, img.getIconWidth(), img.getIconHeight(), null);
+		if(hasBackground) {
+			g.drawImage(img.getImage(), 0, 0, img.getIconWidth(), img.getIconHeight(), null);
+		}
 
 		// as the tiles are drawn with the origin at the
 		// bottom right, but the component's origin is the top left,

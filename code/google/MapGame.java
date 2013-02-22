@@ -75,7 +75,7 @@ public class MapGame implements KeyListener {
 		mainFrame.createBufferStrategy(2);
 		strat = mainFrame.getBufferStrategy();
 
-		scene = Scene.loadScene("scenes/test.dat");
+		scene = Scene.loadScene("scenes/test.dat", false);
 		cam = new Camera();
 		player = new PlayerSprite();
 

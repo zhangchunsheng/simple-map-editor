@@ -40,6 +40,8 @@ public class Map {
 
 	int viewWidth = 400;
 	int viewHeight = 400;
+	
+	boolean hasBackground = false;
 
 	GraphicsBank gfx;
 
@@ -226,6 +228,10 @@ public class Map {
 
 	public int getZoomHeight() {
 		return zoomHeight;
+	}
+	
+	public boolean getHasBackground() {
+		return hasBackground;
 	}
 
 	/**

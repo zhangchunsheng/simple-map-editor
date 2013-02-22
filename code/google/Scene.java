@@ -62,7 +62,7 @@ public class Scene {
 	 * loads a scene from the given URL. takes tiles from the given
 	 * GraphicsBank.
 	 */
-	static Scene loadScene(File f) throws IOException {
+	static Scene loadScene(File f, boolean hasBackground) throws IOException {
 		boolean hasColourEffect = false;
 		float r = 1;
 		float g = 1;
@@ -110,15 +110,19 @@ public class Scene {
 		}
 
 		for (int z = 0; z < 3; z++) {
-			line = reader.readLine();
-			tokens = new StringTokenizer(line);
-
 			for (int y = 0; y < height; y++) {
+				line = reader.readLine();
+				tokens = new StringTokenizer(line);
 				for (int x = 0; x < width; x++) {
 					String code = tokens.nextToken();
-					map.setTile(x, y, z, gfx.getTile(Integer.parseInt(code)));
+					if(hasBackground) {
+						map.setTile(x, y, z, gfx.getMapTile(code));
+					} else {
+						map.setTile(x, y, z, gfx.getTile(Integer.parseInt(code)));
+					}
 				}
 			}
+			line = reader.readLine();
 		}
 		reader.close();
 
@@ -132,8 +136,8 @@ public class Scene {
 
 	}
 
-	static Scene loadScene(String filename) throws IOException {
-		Scene scene = loadScene(new File(filename));
+	static Scene loadScene(String filename, boolean hasBackground) throws IOException {
+		Scene scene = loadScene(new File(filename), hasBackground);
 		return scene;
 	}
 
@@ -188,6 +192,94 @@ public class Scene {
 
 			writer.flush();
 			writer.close();
+
+		} catch (IOException e) {
+			throw new RuntimeException("Could not save the level");
+		}
+
+		System.err.println("Saved");
+	}
+	
+	/**
+	 * writes the map only (at the moment) to a file.
+	 */
+	public void saveMapScene(File file, File js_file) {
+		if (tileset.isUnsaved()) {
+			throw new RuntimeException(
+					"Tileset is unsaved. Cannot save the scene");
+		}
+
+		try {
+			PrintWriter writer = new PrintWriter(new BufferedWriter(
+					new FileWriter(file)));
+			PrintWriter js_writer = new PrintWriter(new BufferedWriter(
+					new FileWriter(js_file)));
+
+			String line = "";
+
+			int width = map.getWidth();
+			int height = map.getHeight();
+
+			File wd = new File(file.getParentFile().getCanonicalFile()
+					.toString());
+			File ts = new File(tileset.getFile().getCanonicalFile().toString());
+
+			String relativePath = RelativePath.getRelativePath(wd, ts);
+
+			line = width + " " + height + " " + relativePath;
+			writer.println(line);
+
+			line = "colorization " + effect_rScale + " " + effect_gScale + " "
+					+ effect_bScale + " " + effect_hue + " " + effect_sat;
+			writer.println(line);
+
+			System.out.println("Colorization red in save is " + effect_rScale);
+			writer.println(".");
+
+			js_writer.print("[");
+			for (int z = 0; z < 3; z++) {
+				for (int i = 0; i < height; i++) {
+					if(z == 0) {
+						js_writer.print("[");
+					}
+					for (int j = 0; j < width; j++) {
+						Tile t = map.getTile(j, i, z);
+						if (t != null)
+							writer.print(t.getType() + " ");
+						else
+							writer.print("1 ");
+						if(z == 0) {
+							if(j == width - 1) {
+								if (t != null)
+									js_writer.print(t.getType());
+								else
+									js_writer.print("1");
+							} else {
+								if (t != null)
+									js_writer.print(t.getType() + ",");
+								else
+									js_writer.print("1,");
+							}
+						}
+					}
+					writer.println();
+					if(z == 0) {
+						if(i == height - 1) {
+							js_writer.print("]");
+						} else {
+							js_writer.print("],");
+						}
+						js_writer.println();
+					}
+				}
+				writer.println();
+			}
+			js_writer.print("]");
+
+			writer.flush();
+			writer.close();
+			js_writer.flush();
+			js_writer.close();
 
 		} catch (IOException e) {
 			throw new RuntimeException("Could not save the level");

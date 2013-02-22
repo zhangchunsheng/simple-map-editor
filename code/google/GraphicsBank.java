@@ -199,6 +199,20 @@ public class GraphicsBank {
 		}
 		return null;
 	}
+	
+	/**
+	 * Get a tile by type
+	 **/
+	Tile getMapTile(String type) {
+		Iterator i = tiles.iterator();
+		while (i.hasNext()) {
+			Tile t = (Tile) i.next();
+			if (t.type.equals(type)) {
+				return t;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Get a tile by name. Case sensitive
