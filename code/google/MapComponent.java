@@ -24,7 +24,7 @@ public class MapComponent extends JComponent implements MouseListener,
 	boolean stateChanged = false;
 	
 	boolean hasBackground = false;
-	ImageIcon img = new ImageIcon("gfx/map.png");
+	ImageIcon img = new ImageIcon("gfx/map_.png");
 
 	Stack undoStack;
 	Stack redoStack;

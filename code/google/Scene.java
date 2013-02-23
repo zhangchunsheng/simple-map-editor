@@ -250,15 +250,17 @@ public class Scene {
 							writer.print("1 ");
 						if(z == 0) {
 							if(j == width - 1) {
-								if (t != null)
+								if (t != null) {
 									js_writer.print(t.getType());
-								else
+								} else {
 									js_writer.print("1");
+								}
 							} else {
-								if (t != null)
+								if (t != null) {
 									js_writer.print(t.getType() + ",");
-								else
+								} else {
 									js_writer.print("1,");
+								}
 							}
 						}
 					}
@@ -274,6 +276,38 @@ public class Scene {
 				}
 				writer.println();
 			}
+			/*for (int z = 0; z < 3; z++) {
+				for (int i = 0; i < width; i++) {
+					if(z == 0) {
+						js_writer.print("[");
+					}
+					for (int j = 0; j < height; j++) {
+						Tile t = map.getTile(i, j, z);
+						if(z == 0) {
+							if(j == height - 1) {
+								if (t != null)
+									js_writer.print(t.getType());
+								else
+									js_writer.print("1");
+							} else {
+								if (t != null)
+									js_writer.print(t.getType() + ",");
+								else
+									js_writer.print("1,");
+							}
+						}
+					}
+					writer.println();
+					if(z == 0) {
+						if(i == width - 1) {
+							js_writer.print("]");
+						} else {
+							js_writer.print("],");
+						}
+						js_writer.println();
+					}
+				}
+			}*/
 			js_writer.print("]");
 
 			writer.flush();
