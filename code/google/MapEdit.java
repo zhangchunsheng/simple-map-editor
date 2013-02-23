@@ -24,8 +24,10 @@ public class MapEdit implements ActionListener, ChangeListener, KeyListener {
 	
 	int width = 5332;
 	int height = 2728;
-	int tilewidth = 86;
-	int tileheight = 44;
+	int tilewidth = 40;//86
+	int tileheight = 40;//44
+	
+	int offsetTop = 132;
 
 	JFrame mainFrame; // The window.
 	MapComponent mapPanel; // Special panel for rendering map with a viewport.

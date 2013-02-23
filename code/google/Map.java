@@ -42,6 +42,7 @@ public class Map {
 	int viewHeight = 400;
 	
 	boolean hasBackground = false;
+	int offsetTop = 0;
 
 	GraphicsBank gfx;
 

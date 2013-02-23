@@ -239,15 +239,24 @@ public class Scene {
 			js_writer.print("[");
 			for (int z = 0; z < 3; z++) {
 				for (int i = 0; i < height; i++) {
-					if(z == 0) {
-						js_writer.print("[");
-					}
 					for (int j = 0; j < width; j++) {
 						Tile t = map.getTile(j, i, z);
 						if (t != null)
 							writer.print(t.getType() + " ");
 						else
 							writer.print("1 ");
+					}
+					writer.println();
+				}
+				writer.println();
+			}
+			for (int z = 0; z < 3; z++) {
+				for (int i = (Math.round(132 / map.getTileHeight()) - 1); i < height; i++) {
+					if(z == 0) {
+						js_writer.print("[");
+					}
+					for (int j = 0; j < width; j++) {
+						Tile t = map.getTile(j, i, z);
 						if(z == 0) {
 							if(j == width - 1) {
 								if (t != null) {
@@ -264,7 +273,6 @@ public class Scene {
 							}
 						}
 					}
-					writer.println();
 					if(z == 0) {
 						if(i == height - 1) {
 							js_writer.print("]");
@@ -274,7 +282,6 @@ public class Scene {
 						js_writer.println();
 					}
 				}
-				writer.println();
 			}
 			/*for (int z = 0; z < 3; z++) {
 				for (int i = 0; i < width; i++) {

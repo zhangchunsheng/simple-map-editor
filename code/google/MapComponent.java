@@ -92,7 +92,7 @@ public class MapComponent extends JComponent implements MouseListener,
 		g.setColor(Color.white);
 		g.fillRect(0, 0, width * tileWidth, height * tileHeight);
 		if(hasBackground) {
-			g.drawImage(img.getImage(), 0, 0, img.getIconWidth(), img.getIconHeight(), null);
+			g.drawImage(img.getImage(), 0, map.offsetTop, img.getIconWidth(), img.getIconHeight(), null);
 		}
 
 		// as the tiles are drawn with the origin at the
@@ -230,7 +230,7 @@ public class MapComponent extends JComponent implements MouseListener,
 
 	public void mousePressed(MouseEvent e) {
 		if (stateChanged) {
-			saveUndoState();
+			//saveUndoState();
 			stateChanged = false;
 		}
 		switch (e.getButton()) {
